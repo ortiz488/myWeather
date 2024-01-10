@@ -8,7 +8,7 @@ import okhttp3.Response;
 
 public class HttpRequest {
 
-    public static Response HttpRequest(String url) {
+    public static Response HttpRequestResponse(String url, String city, String state) {
         try {
             Log.e("HttpUtils1", "FROM HttpUtils - URL:  ----->  " + url);
 
