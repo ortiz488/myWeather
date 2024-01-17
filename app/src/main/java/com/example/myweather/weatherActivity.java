@@ -15,10 +15,30 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import okhttp3.Response;
 
 public class weatherActivity extends AppCompatActivity {
+
+    class Days{
+        String time;
+        String tempAvg;
+        String tempMax;
+        String tempMin;
+
+        Days(String time, String tempAvg, String tempMax, String tempMin){
+            this.time = time;
+            this.tempAvg = tempAvg;
+            this.tempMax = tempMax;
+            this.tempMin = tempMin;
+        }
+
+        void printAll(){
+            String info = time + " * " + tempAvg + " * " + tempMax + " * " + tempMin;
+            Log.e("Days", "FROM Days - printAll - ----->  " + info);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +96,46 @@ public class weatherActivity extends AppCompatActivity {
 
             JsonParser parser = new JsonParser();
 
+            //Get the first object "timelines"
             JsonObject jsonObject1 = (JsonObject)parser.parse(json);
+
+            JsonObject jsonObject2 = (JsonObject)jsonObject1.get("timelines");
+
+            JsonArray jsonArrayDaily = (JsonArray)jsonObject2.get("daily");
+
+            ArrayList<Days> forecastDays = new ArrayList<Days>();
+
+            String time;
+            String tempAvg;
+            String tempMax;
+            String tempMin;
+
+            for (int i = 0; i < jsonArrayDaily.size(); i++)
+            {
+                JsonObject jsonObject3 = (JsonObject) jsonArrayDaily.get(i);
+
+                time = String.valueOf(jsonObject3.get("time"));
+                Log.e("Debug", "FROM parseJsonForecast - For loop - time: ----->  " + time);
+
+                JsonObject jsonObject4 = (JsonObject)jsonObject3.get("values");
+
+                tempAvg = String.valueOf(jsonObject4.get("temperatureApparentAvg"));
+                Log.e("Debug", "FROM parseJsonForecast - For loop - temperatureApparentAvg: ----->  " + tempAvg);
+
+                tempMax = String.valueOf(jsonObject4.get("temperatureApparentMax"));
+                Log.e("Debug", "FROM parseJsonForecast - For loop - temperatureApparentMax: ----->  " + tempMax);
+
+                tempMin = String.valueOf(jsonObject4.get("temperatureApparentMin"));
+                Log.e("Debug", "FROM parseJsonForecast - For loop - temperatureApparentMin: ----->  " + tempMin);
+
+                forecastDays.add(new Days(time, tempAvg, tempMax, tempMin));
+            }
+
+
+            //Debug - testing that all class objects are correct
+            for (int j = 0; j < forecastDays.size(); j++){
+                forecastDays.get(j).printAll();
+            }
 
         }catch (Exception e){
             e.printStackTrace();
