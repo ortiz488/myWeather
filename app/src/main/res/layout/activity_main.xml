@@ -4,14 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/home"
     tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/textView_welcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="144dp"
         android:text="Hello World!"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,8 +24,11 @@
         android:id="@+id/textView_Instructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="50dp"
         android:text="TextView"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_welcome" />
@@ -30,23 +37,29 @@
         android:id="@+id/editText_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="116dp"
+        android:layout_marginTop="50dp"
+        android:background="@color/white"
         android:ems="10"
         android:inputType="text"
+        android:minHeight="48dp"
         android:text="Enter City"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_Instructions" />
-
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
+        android:layout_marginBottom="80dp"
         android:id="@+id/stateSelect"
         android:hint="Select a State"
+        android:textColorHint="@color/black"
         style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
         app:boxCornerRadiusBottomEnd="10dp"
         app:boxCornerRadiusBottomStart="10dp"
@@ -58,19 +71,18 @@
         tools:layout_editor_absoluteX="0dp">
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/stateInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/stateInput"
-            android:inputType="none">
+            android:inputType="none"></com.google.android.material.textfield.MaterialAutoCompleteTextView>
 
-        </com.google.android.material.textfield.MaterialAutoCompleteTextView>
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/button_go"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="68dp"
+        android:layout_marginBottom="172dp"
         android:text="GO"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
