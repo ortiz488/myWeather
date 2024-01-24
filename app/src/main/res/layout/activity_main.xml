@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/home"
+    android:background="@drawable/main"
     tools:context=".MainActivity">
 
     <TextView
@@ -42,7 +42,7 @@
         android:ems="10"
         android:inputType="text"
         android:minHeight="48dp"
-        android:text="Enter City"
+        android:text="Enter a City"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textStyle="italic"
