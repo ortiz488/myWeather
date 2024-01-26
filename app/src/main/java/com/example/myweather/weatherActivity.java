@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,13 +13,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.ByteArrayInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-
-import okhttp3.Response;
 
 public class weatherActivity extends AppCompatActivity {
 
@@ -105,6 +101,10 @@ public class weatherActivity extends AppCompatActivity {
             String location = removeQuotes(jsonObject4.get("name").toString());
             Log.e("Debug", "FROM parseJsonRealTime - LOCATION:  ---> " + location);
 
+
+            Log.e("Debug", "FROM parseJsonRealTime - BEFORE WeatherDescription() func. call:  ---> ");
+            String weatherDescription = getWeatherCode(weatherCode);
+            Log.e("Debug", "FROM parseJsonRealTime - Weather Description:  ---> " + weatherDescription);
 
             //Set the textview text for temperature
             TextView temp_textView = findViewById(R.id.temp_textView);
@@ -276,7 +276,64 @@ public class weatherActivity extends AppCompatActivity {
         return String.format("%.2f", fahrenheit);
     }
 
+
     public String formatDate(String date){
         return date.substring(0, 10);
     }
+
+
+    public String getWeatherCode(String code){
+        String weatherDescription= "ERROR";
+        String weatherCodesJson = "";
+
+        BufferedReader reader;
+
+        Log.e("Debug", "FROM getWeatherCode - before try block ----->  ");
+
+        try {
+            Log.e("Debug", "FROM getWeatherCode - IN try block ----->  ");
+            reader = new BufferedReader(new InputStreamReader(getAssets().open("weatherCodes.json"), "UTF-8"));
+            //String newLine = reader.readLine();
+            String newLine;
+
+            while ((newLine = reader.readLine()) != null){
+                weatherCodesJson += newLine;
+                Log.e("Debug", "FROM getWeatherCode - Inside while block - weatherCodes.json: ----->  " + weatherCodesJson);
+            }
+
+            reader.close();
+            Log.e("Debug", "FROM getWeatherCode - weatherCodes.json: ----->  " + weatherCodesJson);
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        if(weatherCodesJson != null){
+            Log.e("Debug", "FROM getWeatherCode if block - Before json parse: ----->  ");
+
+            //try
+                JsonParser parser = new JsonParser();
+            Log.e("Debug", "FROM getWeatherCode if block - new json parse: ----->  ");
+
+            JsonObject jsonObject1 = (JsonObject) parser.parse(weatherCodesJson);
+
+            Log.e("Debug", "FROM getWeatherCode if block - jsonObject1: ----->  ");
+
+
+            JsonObject jsonObject2 = (JsonObject) jsonObject1.get("weatherCode");
+
+                weatherDescription = jsonObject2.get(code).toString();
+
+                /*if (weatherDescription == null){
+                    weatherDescription = "ERROR";
+                }*/
+
+            /*}catch (IOException e){
+                e.printStackTrace();
+            }*/
+        }
+
+        return weatherDescription;
+    }
+
 }
