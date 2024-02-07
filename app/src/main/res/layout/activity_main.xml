@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main"
+    android:background="@drawable/home2"
     tools:context=".MainActivity">
 
     <TextView
@@ -80,8 +80,8 @@
 
     <Button
         android:id="@+id/button_go"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="116dp"
+        android:layout_height="61dp"
         android:layout_marginBottom="172dp"
         android:text="GO"
         app:layout_constraintBottom_toBottomOf="parent"
