@@ -83,7 +83,7 @@ public class weatherActivity extends AppCompatActivity {
 
     public void parseJsonRealTime(){
         try {
-            String json = getIntent().getStringExtra("1");
+            String json = getIntent().getStringExtra("responseRealTime");
 
             Log.e("Debug", "FROM parseJsonRealTime - string json: ----->  " + json);
 
@@ -406,7 +406,7 @@ public class weatherActivity extends AppCompatActivity {
             Log.e("Debug", "FROM setWeatherImage - get hours: ----->  " + hoursStr);
 
 
-            if(hoursInt >= 17) {
+            if(hoursInt >= 17 || hoursInt < 7) {
                 switch (code)
                 {
                     case "1000":
