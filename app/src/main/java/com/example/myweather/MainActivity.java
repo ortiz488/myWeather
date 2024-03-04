@@ -76,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
                     //Get the user input.
                     String city = city_editText.getText().toString();
                     String state = stateList.getText().toString();
-//                    Intent intent;
-//                    intent = new Intent(MainActivity.this, weatherActivity.class);
 
                     //Debug
                     Log.i("MainActivity", "City entered ---> " + city);

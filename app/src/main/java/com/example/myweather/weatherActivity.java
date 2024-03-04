@@ -26,13 +26,11 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class weatherActivity extends AppCompatActivity {
-
+    //Nested class used for holding attributes from the forecast api.
     class Days{
-        String time;
-        String tempAvg;
-        String tempMax;
-        String tempMin;
+       String time, tempAvg, tempMax, tempMin;
 
+        //Class constructor
         Days(String time, String tempAvg, String tempMax, String tempMin){
             this.time = time;
             this.tempAvg = tempAvg;
@@ -43,7 +41,7 @@ public class weatherActivity extends AppCompatActivity {
         //This function is used for testing purposes.
         void printAll(){
             String info = time + " * " + tempAvg + " * " + tempMax + " * " + tempMin;
-            Log.e("Days", "FROM Days - printAll - ----->  " + info);
+            Log.i("Days", "FROM Days - printAll - ----->  " + info);
         }
     }
 
@@ -53,15 +51,14 @@ public class weatherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
 
-        //Parse the api response for the current weather and display its values
+        //Parse the api response for the current weather and display its values.
         parseJsonRealTime();
 
-        //Parse the api response for the forecast weather and display its values
+        //Parse the api response for the forecast weather and display its values.
         parseJsonForecast();
 
+        //If the back button is pressed then go back to the MainActivity class.
         Button back_btn = findViewById(R.id.back_button);
-        Button newSearch_btn = findViewById(R.id.newSearch_button);
-
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,6 +66,8 @@ public class weatherActivity extends AppCompatActivity {
             }
         });
 
+        //If the new search button is pressed then go to the MainActivity class.
+        Button newSearch_btn = findViewById(R.id.newSearch_button);
         newSearch_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,103 +80,129 @@ public class weatherActivity extends AppCompatActivity {
     }
 
 
+    //-------------------------------------------------------------------------
+    // This function will parse the response from the realtime api.
+    //-------------------------------------------------------------------------
     public void parseJsonRealTime(){
         try {
+            //Get realtime api response from the main activity.
             String json = getIntent().getStringExtra("responseRealTime");
-
-            Log.e("Debug", "FROM parseJsonRealTime - string json: ----->  " + json);
+            //Debug
+            Log.i("Debug", "FROM parseJsonRealTime - string json: ----->  " + json);
 
             JsonParser parser = new JsonParser();
-
+            //Get the first object from the realtime json.
             JsonObject jsonObject1 = (JsonObject)parser.parse(json);
-
+            //Using the first json object get the nested object called "data".
             JsonObject jsonObject2 = (JsonObject)jsonObject1.get("data");
 
-
+            //From the data object get the key and value for "time".
             String time = removeQuotes(jsonObject2.get("time").toString());
-            Log.e("Debug", "FROM parseJsonRealTime - Time:  ---> " + time);
+            //Debug
+            Log.i("Debug", "FROM parseJsonRealTime - Time:  ---> " + time);
 
+            //Convert the time to pst.
             time = toPst(time);
-            Log.e("Debug", "FROM parseJsonRealTime - After toPst - Time:  ---> " + time);
+            //Debug
+            Log.i("Debug", "FROM parseJsonRealTime - After toPst - Time:  ---> " + time);
 
-
+            //In the "data" object get the nested object call "values".
             JsonObject jsonObject3 = (JsonObject)jsonObject2.get("values");
-
+            //From the "values" object get the key and value for "temperature".
             String temp = toFahrenheit(jsonObject3.get("temperature").toString());
-            Log.e("Debug", "FROM parseJsonRealTime - Temperature:  ---> " + temp);
-
+            //Debug
+            Log.i("Debug", "FROM parseJsonRealTime - Temperature:  ---> " + temp);
+            //From the "values" object get the key and value for "weatherCode".
             String weatherCode = jsonObject3.get("weatherCode").toString();
-            Log.e("Debug", "FROM parseJsonRealTime - Weather Code:  ---> " + weatherCode);
+            //Debug
+            Log.i("Debug", "FROM parseJsonRealTime - Weather Code:  ---> " + weatherCode);
 
+            //get the "location" object
             JsonObject jsonObject4 = (JsonObject)jsonObject1.get("location");
-
+            //From the "location" object get the key and value for "name".
             String location = removeQuotes(jsonObject4.get("name").toString());
-            Log.e("Debug", "FROM parseJsonRealTime - LOCATION:  ---> " + location);
+            //Debug
+            Log.i("Debug", "FROM parseJsonRealTime - LOCATION:  ---> " + location);
 
-
+            //call the function getWeatherCode function, passing the string weather code and call the removeQuotes function.
             String weatherDescription = removeQuotes(getWeatherCode(weatherCode));
-            Log.e("Debug", "FROM parseJsonRealTime - Weather Description:  ---> " + weatherDescription);
+            //Debug
+            Log.i("Debug", "FROM parseJsonRealTime - Weather Description:  ---> " + weatherDescription);
 
+            //Call the function setWeather, passing the string arguments weathercode and time.
             setWeatherImage(weatherCode, time);
 
-            //Set the textview text for temperature
+            //Set the textview text for temperature.
             TextView temp_textView = findViewById(R.id.temp_textView);
+            //\u2109 is code for the fahrenheit sign.
             temp_textView.setText(temp+ "\u2109");
 
-            //Set the textview text for the location
+            //Set the textview text for the location.
             TextView city_textView = findViewById(R.id.city_textView);
             city_textView.setText(location);
 
+            //Set the textview text for weatherDescription.
             TextView weatherDescription_textView = findViewById(R.id.weatherDescription_textView);
-            //weatherDescription_textView.setText("Current Weather Description: " + weatherDescription);
             weatherDescription_textView.setText(weatherDescription);
 
-        }catch (Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
     }
 
 
+    //-------------------------------------------------------------------------
+    // This function will parse the response from the forecast api.
+    //-------------------------------------------------------------------------
     public void parseJsonForecast(){
         try {
+            //Get forecast api response from the main activity.
             String json = getIntent().getStringExtra("responseForecast");
-
-            Log.e("Debug", "FROM parseJsonForecast - string json: ----->  " + json);
+            //Debug
+            Log.i("Debug", "FROM parseJsonForecast - string json: ----->  " + json);
 
             JsonParser parser = new JsonParser();
-
-            //Get the first object "timelines"
+            //Get the first object from the forecast json.
             JsonObject jsonObject1 = (JsonObject)parser.parse(json);
-
+            //Using the first json object get the nested object called "timelines".
             JsonObject jsonObject2 = (JsonObject)jsonObject1.get("timelines");
 
+            //Using the first json object get the nested json array called "daily".
             JsonArray jsonArrayDaily = (JsonArray)jsonObject2.get("daily");
 
+            //Create a arraylist of Days type.
             ArrayList<Days> forecastDays = new ArrayList<Days>();
 
-            String time;
-            String tempAvg;
-            String tempMax;
-            String tempMin;
+            String time, tempAvg, tempMax, tempMin;
 
+            //Iterate through the "daily" json array.
             for (int i = 0; i < jsonArrayDaily.size(); i++)
             {
+                //Get the first object inside the "daily" json array.
                 JsonObject jsonObject3 = (JsonObject) jsonArrayDaily.get(i);
 
+                //Get the key and value for "time" and call the function removeQuotes.
                 time = removeQuotes(String.valueOf(jsonObject3.get("time")));
-                Log.e("Debug", "FROM parseJsonForecast - For loop - time: ----->  " + time);
+                //Debug
+                Log.i("Debug", "FROM parseJsonForecast - For loop - time: ----->  " + time);
 
+                //Using the first json object get the nested object called "values".
                 JsonObject jsonObject4 = (JsonObject)jsonObject3.get("values");
 
+                //From the "values" object get the key and value for "temperatureApparentAvg".
                 tempAvg = String.valueOf(jsonObject4.get("temperatureApparentAvg"));
-                Log.e("Debug", "FROM parseJsonForecast - For loop - temperatureApparentAvg: ----->  " + tempAvg);
-
+                //Debug
+                Log.i("Debug", "FROM parseJsonForecast - For loop - temperatureApparentAvg: ----->  " + tempAvg);
+                //From the "values" object get the key and value for "temperatureApparentMax".
                 tempMax = String.valueOf(jsonObject4.get("temperatureApparentMax"));
-                Log.e("Debug", "FROM parseJsonForecast - For loop - temperatureApparentMax: ----->  " + tempMax);
-
+                //Debug
+                Log.i("Debug", "FROM parseJsonForecast - For loop - temperatureApparentMax: ----->  " + tempMax);
+                //From the "values" object get the key and value for "temperatureApparentMin".
                 tempMin = String.valueOf(jsonObject4.get("temperatureApparentMin"));
-                Log.e("Debug", "FROM parseJsonForecast - For loop - temperatureApparentMin: ----->  " + tempMin);
+                //Debug
+                Log.i("Debug", "FROM parseJsonForecast - For loop - temperatureApparentMin: ----->  " + tempMin);
 
+                //Add a new Day object to the forecastDays array list.
                 forecastDays.add(new Days(time, toFahrenheit(tempAvg), toFahrenheit(tempMax), toFahrenheit(tempMin)));
             }
 
@@ -186,6 +211,7 @@ public class weatherActivity extends AppCompatActivity {
                 forecastDays.get(j).printAll();
             }
 
+            //Call the setGuiForecast function passing the argument forecastDays.
             setGuiForecast(forecastDays);
 
         }catch (Exception e){
@@ -193,13 +219,20 @@ public class weatherActivity extends AppCompatActivity {
         }
     }
 
+    //-------------------------------------------------------------------------
+    // This function uses the forecastDays data to populate the weatherActivity GUI
+    // attributes. The function iterates through the forecastDays arraylist populating
+    // the textviews of date, tempAvg, tempMin, and tempMax.
+    //-------------------------------------------------------------------------
+    public void setGuiForecast(ArrayList<Days> forecastDays) {
+        //Debug
+        Log.i("Debug", "FROM setGuiForecast - forecastDays arraylist size: ----->  " + forecastDays.size());
 
-    public void setGuiForecast(ArrayList<Days> forecastDays){
-        Log.e("Debug", "FROM setGuiForecast - forecastDays arraylist size: ----->  " + forecastDays.size());
-
-        //Start at index 1. This is because the first temperature displayed is the next day.
+        //------------------------------------------------------------
+        //Start at index 1 (tomorrow). This is because the first day temperature is already displayed from the realtime api.
         String time1 = formatDate(forecastDays.get(1).time);
 
+        //Set the text for textViews date1, date1Min, date1Avg, and date1Max.
         TextView date1 = findViewById(R.id.date1_textView);
         date1.setText(time1);
 
@@ -215,6 +248,7 @@ public class weatherActivity extends AppCompatActivity {
         //------------------------------------------------------------
         String time2 = formatDate(forecastDays.get(2).time);
 
+        //Set the text for textViews date2, date2Min, date2Avg, and date2Max.
         TextView date2 = findViewById(R.id.date2_textView);
         date2.setText(time2);
 
@@ -231,6 +265,7 @@ public class weatherActivity extends AppCompatActivity {
         //------------------------------------------------------------
         String time3 = formatDate(forecastDays.get(3).time);
 
+        //Set the text for textViews date3, date3Min, date3Avg, and date3Max.
         TextView date3 = findViewById(R.id.date3_textView);
         date3.setText(time3);
 
@@ -247,6 +282,7 @@ public class weatherActivity extends AppCompatActivity {
         //------------------------------------------------------------
         String time4 = formatDate(forecastDays.get(4).time);
 
+        //Set the text for textViews date4, date4Min, date4Avg, and date4Max.
         TextView date4 = findViewById(R.id.date4_textView);
         date4.setText(time4);
 
@@ -263,6 +299,7 @@ public class weatherActivity extends AppCompatActivity {
         //------------------------------------------------------------
         String time5 = formatDate(forecastDays.get(5).time);
 
+        //Set the text for textViews date5, date5Min, date5Avg, and date5Max.
         TextView date5 = findViewById(R.id.date5_textView);
         date5.setText(time5);
 
@@ -277,7 +314,9 @@ public class weatherActivity extends AppCompatActivity {
         //------------------------------------------------------------
     }
 
-    //This function removes the beginning and ending quotation marks from the json key-values.
+    //-------------------------------------------------------------------------
+    // This function removes the beginning and ending quotation marks from the json key-values.
+    //-------------------------------------------------------------------------
     public String removeQuotes(String s){
         String newString = "";
         newString = s.replace("\"", "");
@@ -285,29 +324,35 @@ public class weatherActivity extends AppCompatActivity {
         return newString;
     }
 
-    //This function converts celsius to fahrenheit.
+    //-------------------------------------------------------------------------
+    // This function converts celsius to fahrenheit.
+    //-------------------------------------------------------------------------
     public String toFahrenheit(String s){
         double celsius = Double.valueOf(s);
 
-        double fahrenheit =  celsius * 1.8 + 32;
+        double fahrenheit =  celsius * 1.8 + 32;    //Formula for celsius to fahrenheit.
 
         return String.format("%.2f", fahrenheit);
     }
 
 
-    //Leave the first 10 characters of the string and cut off the remaining characters.
+    //-------------------------------------------------------------------------
+    // This function formats the date to "00:00:00", leaving the first 10 characters
+    // of the string and cuts off the remaining characters.
+    //-------------------------------------------------------------------------
     public String formatDate(String date){
         return date.substring(0, 10);
     }
 
-
-    //This function using the weather code from the realtime api response to read an external file called
-    // "weatherCodes.json". The argument passed is a weather code that is the key. The function returns
-    // the value of the weather code (key).
+    //-------------------------------------------------------------------------
+    // This function uses the weather code from the realtime api response and read
+    // an external file called "weatherCodes.json". The argument passed is a weather
+    // code that is the key and its value is the weather description. The function
+    // returns the value of the weather code (key).
+    //-------------------------------------------------------------------------
     public String getWeatherCode(String code){
         String weatherDescription= "ERROR";
         String weatherCodesJson = "";
-
         BufferedReader reader;
 
         //Open the external file found in the assets folder called "weatherCodes.json".
@@ -315,11 +360,10 @@ public class weatherActivity extends AppCompatActivity {
             reader = new BufferedReader(new InputStreamReader(getAssets().open("weatherCodes.json"), "UTF-8"));
             String newLine;
 
-            //Read the file and assign the files contents to the string "newLine"
+            //Read the file and assign the files contents to the string "newLine".
             while ((newLine = reader.readLine()) != null){
                 weatherCodesJson += newLine;
             }
-
             //Close the file
             reader.close();
             //Debug
@@ -329,83 +373,85 @@ public class weatherActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //If the string containing the file contents is not null, then parse the json file
-        // and get the value for the key (weather code).
+        //If the string containing the file contents is not null, then parse the json file and get the value for the key (weather code).
         if(weatherCodesJson != null) {
             JsonParser parser = new JsonParser();
-
+            //Get the first json object.
             JsonObject jsonObject1 = (JsonObject) parser.parse(weatherCodesJson);
-
+            //Using jsonObject1 get the nested object call "weatherCode".
             JsonObject jsonObject2 = (JsonObject) jsonObject1.get("weatherCode");
-
+            //From the "weatherCode" object get the key and value for the weather code(the weather code is the argument of the function).
             weatherDescription = jsonObject2.get(code).toString();
         }
-
+        //Return the weather description for the given weather code.
         return weatherDescription;
     }
 
 
-    public String toPst(String utc){
+    //-------------------------------------------------------------------------
+    // This function converts the time from UTC to PST.
+    //-------------------------------------------------------------------------
+    public String toPst(String utc) {
         String pst = "";
 
         try {
+            //Format the time format to "yyyy-MM-dd'T'HH:mm:ss'Z'".
             SimpleDateFormat utcFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             utcFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
             Date utcDate = utcFormat.parse(utc);
 
+            //Convert the time from UTC to PST.
             SimpleDateFormat pstFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             pstFormat.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
-
             pst = pstFormat.format(utcDate);
-
             //Debug
-            Log.e("Debug", "FROM toPst - pst time: ----->  " + pst);
-
+            Log.i("Debug", "FROM toPst - pst time: ----->  " + pst);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
-
+        //Return the PST time.
         return pst;
     }
 
 
+    //-------------------------------------------------------------------------
+    // This function
+    //-------------------------------------------------------------------------
     public void setWeatherImage(String code, String time){
+        //Get the ID for the weather_imageView.
         ImageView weatherImage = findViewById(R.id.weather_imageView);
 
         String imagePath = "";
         String weatherCodesPng = "";
         BufferedReader reader;
 
-        String testURL = "https://raw.githubusercontent.com/Tomorrow-IO-API/tomorrow-weather-codes/master/V2_icons/large/png/10000_clear_large%402x.png";
-
-        //Open the external file found in the assets folder called ""weatherCodePng".json" and read the file contents into the string "weatherCodesPng"
+        //Open the external file found in the assets folder called ""weatherCodePng".json" and read the file contents into the string "weatherCodesPng".
         try {
             reader = new BufferedReader(new InputStreamReader(getAssets().open("weatherCodePng.json"), "UTF-8"));
             String newLine;
 
-            //Read the file and assign the files contents to the string "newLine"
+            //Read the file and assign the files contents to the string "newLine".
             while ((newLine = reader.readLine()) != null){
                 weatherCodesPng += newLine;
             }
             //Close the file
             reader.close();
-
             //Debug
-            Log.e("Debug", "FROM setWeatherImage - weatherCodePng.json: ----->  " + weatherCodesPng);
-        }catch (IOException e){
+            Log.i("Debug", "FROM setWeatherImage - weatherCodePng.json: ----->  " + weatherCodesPng);
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         //If the string containing the file contents is not null, then parse the json file
         // and get the value for the key (weather code).
         if(weatherCodesPng != null) {
-
-            //int hoursInt;
+            //Get the current hour.
             String hoursStr = time.substring(11,13);
             int hoursInt = Integer.parseInt(hoursStr);
-            Log.e("Debug", "FROM setWeatherImage - get hours: ----->  " + hoursStr);
+            //Debug
+            Log.i("Debug", "FROM setWeatherImage - get hours: ----->  " + hoursStr);
 
-
+            //If the hour is at night or early morning change the weather code to a night weather code.
             if(hoursInt >= 17 || hoursInt < 7) {
                 switch (code)
                 {
@@ -423,26 +469,22 @@ public class weatherActivity extends AppCompatActivity {
                         break;
                 }
                 //Debug
-                Log.e("Debug", "FROM setWeatherImage - if block - New Code: ----->  " + code);
+                Log.i("Debug", "FROM setWeatherImage - if block - New Code: ----->  " + code);
             }
 
             JsonParser parser = new JsonParser();
-
+            //Get the first json object.
             JsonObject jsonObject1 = (JsonObject) parser.parse(weatherCodesPng);
-
+            //Using jsonObject1 get the nested object call "weatherCodePng".
             JsonObject jsonObject2 = (JsonObject) jsonObject1.get("weatherCodePng");
 
+            //Get the image url path from the key value pair.
             imagePath = removeQuotes(jsonObject2.get(code).toString());
-
             //Debug
-            Log.e("Debug", "FROM setWeatherImage - image path: ----->  " + imagePath);
+            Log.i("Debug", "FROM setWeatherImage - image path: ----->  " + imagePath);
         }
 
+        //Use Picasso to upload the image to the ImageView call "weather_imageView".
         Picasso.get().load(imagePath).into(weatherImage);
-
-        //Picasso.get().load(testURL).into(weatherImage);
     }
-
-    //android:background="@drawable/weather5"
-
 }
