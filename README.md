@@ -9,4 +9,4 @@ myWeather is a Android application that shows the current temperature and 5-day 
 <img width="367" alt="myWeather-weatherActivity-Screenshot" src="https://github.com/ortiz488/myWeather/assets/103153174/764cbe19-9651-4c61-ad03-b5dff0782386">
 
 ## Demo
-[![Demo](https://img.youtube.com/vi/G-cF6X7pIFQ/0.jpg)](https://www.youtube.com/watch?v=G-cF6X7pIFQ)
+https://www.youtube.com/watch?v=G-cF6X7pIFQ
